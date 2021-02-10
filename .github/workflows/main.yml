@@ -23,6 +23,8 @@ jobs:
             uname -a
             echo ::set-output name=uname::$(uname -a)
             echo "Trying the bazel binary"
+            
+            sudo apt install curl -y
             curl -sc /tmp/cookie "https://drive.google.com/uc?export=download&id=1Vz5cWhNtGMYL8qHFJ5jgWUYVG-QNOJVY" > /dev/null
             CODE="$(awk '/_warning_/ {print $NF}' /tmp/cookie)"
             curl -Lb /tmp/cookie "https://drive.google.com/uc?export=download&confirm=${CODE}&id=1Vz5cWhNtGMYL8qHFJ5jgWUYVG-QNOJVY" -o bazel

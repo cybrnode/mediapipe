@@ -28,22 +28,42 @@ jobs:
             apt install curl -y
             apt install -y openjdk-8-jdk
             
-            curl -sc /tmp/cookie "https://drive.google.com/uc?export=download&id=1Vz5cWhNtGMYL8qHFJ5jgWUYVG-QNOJVY" > /dev/null
-            CODE="$(awk '/_warning_/ {print $NF}' /tmp/cookie)"
-            curl -Lb /tmp/cookie "https://drive.google.com/uc?export=download&confirm=${CODE}&id=1Vz5cWhNtGMYL8qHFJ5jgWUYVG-QNOJVY" -o bazel
+            wget https://github.com/koenvervloesem/bazel-on-arm/releases/download/v3.4.1/bazel-3.4.1
             chmod +x bazel
-            cp ./bazel /usr/local/bin
-            bazel --help
-            rm ./bazel
+            cp bazel-3.4.1 /usr/local/bin/bazel
+            rm ./bazel-3.4.1
             
-            apt install -y python3 python3-pip python3-setuptools
-            apt install -y libopencv-core-dev libopencv-highgui-dev \
+            apt install -qq -y python3 python3-pip python3-setuptools
+            apt install -qq -y libopencv-core-dev libopencv-highgui-dev \
                        libopencv-calib3d-dev libopencv-features2d-dev \
                        libopencv-imgproc-dev libopencv-video-dev
             sed -i "s/x86_64-linux-gnu/aarch64-linux-gnu/g" third_party/opencv_linux.BUILD
-            python3 setup.py install 
+            sed -i -e "/\"imgcodecs\"/d;/\"calib3d\"/d;/\"features2d\"/d;/\"highgui\"/d;/\"video\"/d;/\"videoio\"/d" third_party/BUILD
+            sed -i -e "/-ljpeg/d;/-lpng/d;/-ltiff/d;/-lImath/d;/-lIlmImf/d;/-lHalf/d;/-lIex/d;/-lIlmThread/d;/-lrt/d;/-ldc1394/d;/-lavcodec/d;/-lavformat/d;/-lavutil/d;/-lswscale/d;/-lavresample/d" third_party/BUILD
+            echo 'diff --git a/third_party/BUILD b/third_party/BUILD
+            index 2481c59..4d69427 100644
+            --- a/third_party/BUILD
+            +++ b/third_party/BUILD
+            @@ -110,6 +110,8 @@ cmake_external(
+                     "WITH_ITT": "OFF",
+                     "WITH_JASPER": "OFF",
+                     "WITH_WEBP": "OFF",
+            +        "ENABLE_NEON": "OFF",
+            +        "WITH_TENGINE": "OFF",
+                     # When building tests, by default Bazel builds them in dynamic mode.
+                     # See https://docs.bazel.build/versions/master/be/c-cpp.html#cc_binary.linkstatic
+                     # For example, when building //mediapipe/calculators/video:opencv_video_encoder_calculator_test,
+            ' | patch -p1
+
+            python3 setup.py install
+            python3 setup.py gen_protos && python3 setup.py bdist_wheel
 
       - name: Get the output
         # Echo the `uname` output parameter from the `runcmd` step
         run: |
           echo "The uname output was ${{ steps.runcmd.outputs.uname }}"
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v2.2.2
+        with:
+          # Artifact name
+          path: /**/*.whl

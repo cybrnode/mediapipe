@@ -24,12 +24,13 @@ jobs:
             echo ::set-output name=uname::$(uname -a)
             echo "Trying the bazel binary"
             
-            sudo apt install curl -y
+            apt update
+            apt install curl -y
             curl -sc /tmp/cookie "https://drive.google.com/uc?export=download&id=1Vz5cWhNtGMYL8qHFJ5jgWUYVG-QNOJVY" > /dev/null
             CODE="$(awk '/_warning_/ {print $NF}' /tmp/cookie)"
             curl -Lb /tmp/cookie "https://drive.google.com/uc?export=download&confirm=${CODE}&id=1Vz5cWhNtGMYL8qHFJ5jgWUYVG-QNOJVY" -o bazel
-            sudo chmod +x bazel
-            sudo cp ./bazel /usr/local/bin
+            chmod +x bazel
+            cp ./bazel /usr/local/bin
             bazel --help
             rm ./bazel
 

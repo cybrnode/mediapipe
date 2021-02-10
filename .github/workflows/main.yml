@@ -36,8 +36,8 @@ jobs:
             bazel --help
             rm ./bazel
             
-            apt install python3
-            apt install libopencv-core-dev libopencv-highgui-dev \
+            apt install -y python3
+            apt install -y libopencv-core-dev libopencv-highgui-dev \
                        libopencv-calib3d-dev libopencv-features2d-dev \
                        libopencv-imgproc-dev libopencv-video-dev
             sed -i "s/x86_64-linux-gnu/aarch64-linux-gnu/g" third_party/opencv_linux.BUILD

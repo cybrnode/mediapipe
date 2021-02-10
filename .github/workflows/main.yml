@@ -36,7 +36,7 @@ jobs:
             bazel --help
             rm ./bazel
             
-            apt install -y python3
+            apt install -y python3 python3-pip python3-setuptools
             apt install -y libopencv-core-dev libopencv-highgui-dev \
                        libopencv-calib3d-dev libopencv-features2d-dev \
                        libopencv-imgproc-dev libopencv-video-dev

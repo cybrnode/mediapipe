@@ -29,8 +29,8 @@ jobs:
             apt install -y openjdk-8-jdk
 
             wget https://github.com/koenvervloesem/bazel-on-arm/releases/download/v3.4.1/bazel-3.4.1
-            chmod +x bazel
             cp bazel-3.4.1 /usr/local/bin/bazel
+            chmod +x /usr/local/bin/bazel
             rm ./bazel-3.4.1
             
             apt install -qq -y python3 python3-pip python3-setuptools

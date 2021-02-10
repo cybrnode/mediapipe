@@ -25,9 +25,9 @@ jobs:
             echo "Trying the bazel binary"
             
             apt update
-            apt install curl -y
+            apt install curl wget -y
             apt install -y openjdk-8-jdk
-            
+
             wget https://github.com/koenvervloesem/bazel-on-arm/releases/download/v3.4.1/bazel-3.4.1
             chmod +x bazel
             cp bazel-3.4.1 /usr/local/bin/bazel
